@@ -50,15 +50,16 @@ tr.ft td,tr:last-child td{font-weight:700}
 .card{transition:transform .2s,box-shadow .2s}.card:hover{transform:translateY(-4px) scale(1.01)}
 .spark{position:fixed;width:7px;height:7px;border-radius:2px;pointer-events:none;z-index:99}
 @media(prefers-reduced-motion:reduce){.fx-in{animation:none;opacity:1}.shim{animation:none}.bar i,.ring .fg{transition:none}.card:hover{transform:none}}</style><style>.lg{display:inline-block;width:10px;height:10px;border-radius:2px;margin:0 4px 0 10px;vertical-align:middle}.stk{display:flex;height:8px;border-radius:9px;overflow:hidden;background:#1c1c1c;min-width:140px;margin-top:3px}.stk i{display:block;height:100%;width:0;transition:width 1.2s cubic-bezier(.2,.8,.2,1)}@media(prefers-reduced-motion:reduce){.stk i{transition:none}}</style></head><body>
-<style>.ctl{display:flex;flex-wrap:wrap;gap:10px;margin:0 0 12px}.ctl input,.ctl select{background:#0c0c0c;color:#f5f5f5;border:1px solid #e8b92347;border-radius:999px;padding:7px 14px;font:13px Inter}td a{color:#e8b923}</style></head><body>
+<style>.ctl{display:flex;flex-wrap:wrap;gap:10px;margin:0 0 12px}.ctl input,.ctl select{background:#0c0c0c;color:#f5f5f5;border:1px solid #e8b92347;border-radius:999px;padding:7px 14px;font:13px Inter}td a{color:#e8b923}.nt{background:#0c0c0c;color:#f5f5f5;border:1px solid #e8b92347;border-radius:6px;padding:4px 8px;font:13px Inter;width:240px}</style></head><body>
 <div id="app"><div class="top"><div class="wrap"><h1>MHP Deal Finder</h1><div class="muted" id="gen"></div></div></div><div class="wrap">
 <h2>Overview</h2><div class="cards" id="cards"></div>
 <h2>Parks by State</h2><div class="scroll" id="tS"></div>
 <h2>Parks</h2><div class="pills" id="pills"></div>
-<div class="ctl"><input id="q" placeholder="Search park, city, county, address…" size="34"><select id="pmin"><option value="10">10+ pads</option><option value="20">20+ pads</option><option value="30">30+ pads</option><option value="40">40+ pads</option></select><select id="ph"><option value="">Any phone</option><option value="1">Has phone</option></select><span class="muted" id="cnt" style="align-self:center"></span></div>
+<div class="ctl"><input id="q" placeholder="Search park, city, county, address…" size="34"><select id="pmin"><option value="10">10+ pads</option><option value="20">20+ pads</option><option value="30">30+ pads</option><option value="40">40+ pads</option></select><select id="ph"><option value="">Any phone</option><option value="1">Has phone</option></select><button class="pill" onclick="expN()">Export notes (CSV)</button><button class="pill" onclick="document.getElementById('impf').click()">Import notes</button><input type="file" id="impf" accept=".csv,.json" style="display:none" onchange="impN(this.files[0])"><span class="muted" id="cnt" style="align-self:center"></span></div>
 <div class="scroll" id="tP"></div><br></div></div>
 <script>
 const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+let NT=JSON.parse(localStorage.getItem('mhp_notes')||'{}');const pid=p=>[p[0],p[3],p[4],p[5]].join('|').toLowerCase();
 const N=n=>Number(n).toLocaleString();let D,ST='';
 function render(d){D=d;document.getElementById('gen').textContent='Off-market mobile home parks, 10–50 pads · '+d.parks.length.toLocaleString()+' parks in '+d.states.length+' states · built '+d.generated;
  const P=d.parks,tp=P.reduce((a,p)=>a+p[7],0),wp=P.filter(p=>p[6]).length;
@@ -75,10 +76,17 @@ function render(d){D=d;document.getElementById('gen').textContent='Off-market mo
 function tbl(){const q=document.getElementById('q').value.toLowerCase(),mn=+document.getElementById('pmin').value,ph=document.getElementById('ph').value;
  const L=D.parks.filter(p=>(!ST||p[0]===ST)&&p[7]>=mn&&(!ph||p[6])&&(!q||(p[1]+' '+p[2]+' '+p[3]+' '+p[4]+' '+p[5]).toLowerCase().includes(q)));
  document.getElementById('cnt').textContent=N(L.length)+' parks · '+N(L.reduce((a,p)=>a+p[7],0))+' pads';
- let h='<table><thead><tr><th>Park</th><th>State</th><th>City</th><th>County</th><th>Address</th><th>Zip</th><th>Phone</th><th>Pads</th><th>Source</th><th>Listing</th><th>Map</th></tr></thead><tbody>';
+ let h='<table><thead><tr><th>Park</th><th>State</th><th>City</th><th>County</th><th>Address</th><th>Zip</th><th>Phone</th><th>Pads</th><th>Notes</th><th>Listing</th><th>Map</th></tr></thead><tbody>';
  for(const p of L){const m=p[8]!=null?`https://www.google.com/maps?q=${p[8]},${p[9]}`:`https://www.google.com/maps/search/${encodeURIComponent(p[3]+' '+p[4]+' '+p[1]+' '+p[0])}`;
-  h+=`<tr><td style="text-align:left">${esc(p[3])}</td><td>${p[0]}</td><td style="text-align:left">${esc(p[1])}</td><td style="text-align:left">${esc(p[2])}</td><td style="text-align:left">${esc(p[4])}</td><td>${esc(p[5])}</td><td>${p[6]?`<a href="tel:${esc(p[6])}">${esc(p[6])}</a>`:''}</td><td data-v="${p[7]}">${p[7]}</td><td style="text-align:left">${esc(p[10])}</td><td>${p[11]?`<a href="${esc(p[11])}" target="_blank" rel="noopener">Open</a>`:''}</td><td><a href="${m}" target="_blank" rel="noopener">Map</a></td></tr>`}
+  h+=`<tr><td style="text-align:left">${esc(p[3])}</td><td>${p[0]}</td><td style="text-align:left">${esc(p[1])}</td><td style="text-align:left">${esc(p[2])}</td><td style="text-align:left">${esc(p[4])}</td><td>${esc(p[5])}</td><td>${p[6]?`<a href="tel:${esc(p[6])}">${esc(p[6])}</a>`:''}</td><td data-v="${p[7]}">${p[7]}</td><td data-v="${esc(NT[pid(p)]||'')}" style="text-align:left"><input class="nt" data-id="${esc(pid(p))}" value="${esc(NT[pid(p)]||'')}" placeholder="Add note…"></td><td>${p[11]?`<a href="${esc(p[11])}" target="_blank" rel="noopener">Open</a>`:''}</td><td><a href="${m}" target="_blank" rel="noopener">Map</a></td></tr>`}
  document.getElementById('tP').innerHTML=h+'</tbody></table>'}
+document.addEventListener('input',e=>{const t=e.target;if(!t.classList.contains('nt'))return;const v=t.value.trim();if(v)NT[t.dataset.id]=v;else delete NT[t.dataset.id];t.parentNode.dataset.v=v;saveN()});
+function saveN(){localStorage.setItem('mhp_notes',JSON.stringify(NT))}
+const cq=s=>'"'+String(s).replace(/"/g,'""')+'"';
+function expN(){const P=Object.fromEntries(D.parks.map(p=>[pid(p),p]));let c='id,state,park,city,address,note\n';for(const[k,v]of Object.entries(NT)){const p=P[k]||[];c+=[k,p[0]||'',p[3]||'',p[1]||'',p[4]||'',v].map(cq).join(',')+'\n'}
+ const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([c],{type:'text/csv'}));a.download='mhp_notes_'+new Date().toISOString().slice(0,10)+'.csv';a.click()}
+function pcsv(t){const R=[];let r=[],f='',q=0;for(let i=0;i<t.length;i++){const c=t[i];if(q){if(c=='"'){if(t[i+1]=='"'){f+='"';i++}else q=0}else f+=c}else if(c=='"')q=1;else if(c==','){r.push(f);f=''}else if(c=='\n'){r.push(f);R.push(r);r=[];f=''}else if(c!='\r')f+=c}if(f||r.length){r.push(f);R.push(r)}return R}
+async function impN(f){if(!f)return;const t=await f.text();let n=0;try{if(f.name.endsWith('.json')){for(const[k,v]of Object.entries(JSON.parse(t)))if(v){NT[k]=v;n++}}else{const R=pcsv(t);const i=R[0].indexOf('id'),j=R[0].indexOf('note');for(const r of R.slice(1))if(r[i]&&r[j]){NT[r[i]]=r[j];n++}}saveN();tbl();alert('Imported '+n+' notes')}catch(x){alert('Could not read that file')}document.getElementById('impf').value=''}
 fetch('data.json',{cache:'no-store'}).then(r=>r.json()).then(render);
 </script><!--SORTABLE-START--><script>
 /* Shared sortable tables (Grok Bot trackers). Click any header: asc/desc toggle with ▲/▼.
