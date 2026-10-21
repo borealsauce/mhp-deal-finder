@@ -51,19 +51,13 @@ tr.ft td,tr:last-child td{font-weight:700}
 .spark{position:fixed;width:7px;height:7px;border-radius:2px;pointer-events:none;z-index:99}
 @media(prefers-reduced-motion:reduce){.fx-in{animation:none;opacity:1}.shim{animation:none}.bar i,.ring .fg{transition:none}.card:hover{transform:none}}</style><style>.lg{display:inline-block;width:10px;height:10px;border-radius:2px;margin:0 4px 0 10px;vertical-align:middle}.stk{display:flex;height:8px;border-radius:9px;overflow:hidden;background:#1c1c1c;min-width:140px;margin-top:3px}.stk i{display:block;height:100%;width:0;transition:width 1.2s cubic-bezier(.2,.8,.2,1)}@media(prefers-reduced-motion:reduce){.stk i{transition:none}}</style></head><body>
 <style>.ctl{display:flex;flex-wrap:wrap;gap:10px;margin:0 0 12px}.ctl input,.ctl select{background:#0c0c0c;color:#f5f5f5;border:1px solid #e8b92347;border-radius:999px;padding:7px 14px;font:13px Inter}td a{color:#e8b923}</style></head><body>
-<div id="gate"><form onsubmit="go(event)"><h1>MHP Deal Finder</h1><p class="muted">Enter password</p><input id="pw" type="password" autofocus><button>Open</button><div id="err" class="neg" style="margin-top:8px"></div></form></div>
-<div id="app" style="display:none"><div class="top"><div class="wrap"><h1>MHP Deal Finder</h1><div class="muted" id="gen"></div></div></div><div class="wrap">
+<div id="app"><div class="top"><div class="wrap"><h1>MHP Deal Finder</h1><div class="muted" id="gen"></div></div></div><div class="wrap">
 <h2>Overview</h2><div class="cards" id="cards"></div>
 <h2>Parks by State</h2><div class="scroll" id="tS"></div>
 <h2>Parks</h2><div class="pills" id="pills"></div>
 <div class="ctl"><input id="q" placeholder="Search park, city, county, address…" size="34"><select id="pmin"><option value="10">10+ pads</option><option value="20">20+ pads</option><option value="30">30+ pads</option><option value="40">40+ pads</option></select><select id="ph"><option value="">Any phone</option><option value="1">Has phone</option></select><span class="muted" id="cnt" style="align-self:center"></span></div>
 <div class="scroll" id="tP"></div><br></div></div>
 <script>
-const b64=s=>Uint8Array.from(atob(s),c=>c.charCodeAt(0));
-async function decrypt(pw){const e=await (await fetch('data.enc.json',{cache:'no-store'})).json();
- const km=await crypto.subtle.importKey('raw',new TextEncoder().encode(pw),'PBKDF2',false,['deriveKey']);
- const key=await crypto.subtle.deriveKey({name:'PBKDF2',salt:b64(e.salt),iterations:e.iter,hash:'SHA-256'},km,{name:'AES-GCM',length:256},false,['decrypt']);
- return JSON.parse(new TextDecoder().decode(await crypto.subtle.decrypt({name:'AES-GCM',iv:b64(e.iv)},key,b64(e.ct))));}
 const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const N=n=>Number(n).toLocaleString();let D,ST='';
 function render(d){D=d;document.getElementById('gen').textContent='Off-market mobile home parks, 10–50 pads · '+d.parks.length.toLocaleString()+' parks in '+d.states.length+' states · built '+d.generated;
@@ -85,8 +79,7 @@ function tbl(){const q=document.getElementById('q').value.toLowerCase(),mn=+docu
  for(const p of L){const m=p[8]!=null?`https://www.google.com/maps?q=${p[8]},${p[9]}`:`https://www.google.com/maps/search/${encodeURIComponent(p[3]+' '+p[4]+' '+p[1]+' '+p[0])}`;
   h+=`<tr><td style="text-align:left">${esc(p[3])}</td><td>${p[0]}</td><td style="text-align:left">${esc(p[1])}</td><td style="text-align:left">${esc(p[2])}</td><td style="text-align:left">${esc(p[4])}</td><td>${esc(p[5])}</td><td>${p[6]?`<a href="tel:${esc(p[6])}">${esc(p[6])}</a>`:''}</td><td data-v="${p[7]}">${p[7]}</td><td style="text-align:left">${esc(p[10])}</td><td>${p[11]?`<a href="${esc(p[11])}" target="_blank" rel="noopener">Open</a>`:''}</td><td><a href="${m}" target="_blank" rel="noopener">Map</a></td></tr>`}
  document.getElementById('tP').innerHTML=h+'</tbody></table>'}
-async function go(e){e&&e.preventDefault();const pw=document.getElementById('pw').value;try{const d=await decrypt(pw);sessionStorage.setItem('mhp_pw',pw);document.getElementById('gate').style.display='none';document.getElementById('app').style.display='';render(d)}catch(x){document.getElementById('err').textContent='Wrong password'}}
-(async()=>{const p=sessionStorage.getItem('mhp_pw');if(p){document.getElementById('pw').value=p;go()}})();
+fetch('data.json',{cache:'no-store'}).then(r=>r.json()).then(render);
 </script><!--SORTABLE-START--><script>
 /* Shared sortable tables (Grok Bot trackers). Click any header: asc/desc toggle with ▲/▼.
    Works on dynamically rendered tables via event delegation. Totals (tfoot, .total/.ft/.tot rows,
