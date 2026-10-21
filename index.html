@@ -90,10 +90,11 @@ async function impN(f){if(!f)return;const t=await f.text();let n=0;try{if(f.name
 fetch('data.json',{cache:'no-store'}).then(r=>r.json()).then(render);
 </script><style>th{position:relative}.rz{position:absolute;top:0;right:0;width:8px;height:100%;cursor:col-resize;z-index:2}.rz:hover{background:#e8b92355}#rzr{font:12px Inter;color:#e8b923;cursor:pointer;text-decoration:underline;margin-left:10px}
 table.fx{table-layout:fixed}table.fx th,table.fx td{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0!important;max-width:none}.nt{width:100%!important;min-width:0!important;box-sizing:border-box}</style>
-<script>(function(){const K='mhp_colw2';let W=JSON.parse(localStorage.getItem(K)||'{}'),busy=0;
+<script>(function(){const K='mhp_colw3';let W=JSON.parse(localStorage.getItem(K)||'{}'),busy=0;
 function tid(t){return t.closest('[id]')?.id||'t'}
-function lay(t){const id=tid(t),ws=W[id],ths=[...t.querySelectorAll('thead th')];let cg=t.querySelector('colgroup.rzc');
- if(!ws||ws.length!==ths.length){t.classList.remove('fx');t.style.width='';if(cg)cg.remove();return}
+function defs(t,ths){const rs=[...t.tBodies[0]?.rows||[]].slice(0,600),n=ths.length;return ths.map((th,i)=>{let L=0,c=0;for(const r of rs){const td=r.cells[i];if(!td)continue;const inp=td.querySelector('input');const v=inp?(inp.value||'Add note…'):td.textContent.trim();if(v){L+=v.length;c++}}const avg=c?L/c:0,hw=th.textContent.replace(/[▲▼]/g,'').trim().length*8.5+30;return Math.round(Math.min(350,Math.max(hw,avg*7.5+24,40)))})}
+function lay(t){const id=tid(t),ths=[...t.querySelectorAll('thead th')];if(!ths.length)return;let ws=W[id];if(!ws||ws.length!==ths.length){ws=defs(t,ths)}let cg=t.querySelector('colgroup.rzc');
+
  if(!cg){cg=document.createElement('colgroup');cg.className='rzc';t.prepend(cg)}
  if(cg.children.length!==ws.length){cg.innerHTML=ws.map(()=>'<col>').join('')}
  ws.forEach((w,i)=>cg.children[i].style.width=w+'px');t.classList.add('fx');t.style.width=ws.reduce((a,b)=>a+b,0)+'px'}
@@ -101,7 +102,7 @@ function apply(){if(busy)return;busy=1;document.querySelectorAll('table').forEac
  t.querySelectorAll('thead th').forEach((th,i)=>{if(th.querySelector('.rz'))return;const h=document.createElement('span');h.className='rz';h.title='Drag to resize';th.appendChild(h);
  h.addEventListener('click',e=>{e.stopPropagation();e.preventDefault()},true);
  h.addEventListener('mousedown',e=>{e.stopPropagation();e.preventDefault();const ths=[...t.querySelectorAll('thead th')];
-  if(!W[id]||W[id].length!==ths.length)W[id]=ths.map(x=>x.getBoundingClientRect().width);
+  if(!W[id]||W[id].length!==ths.length)W[id]=ths.map(x=>Math.round(x.getBoundingClientRect().width));
   const x0=e.clientX,w0=W[id][i];
   const mv=ev=>{W[id][i]=Math.max(40,Math.round(w0+ev.clientX-x0));lay(t)};
   const up=()=>{document.removeEventListener('mousemove',mv);document.removeEventListener('mouseup',up);localStorage.setItem(K,JSON.stringify(W));const blk=c=>{c.stopPropagation();c.preventDefault()};window.addEventListener('click',blk,{capture:true,once:true});setTimeout(()=>window.removeEventListener('click',blk,true),50)};
