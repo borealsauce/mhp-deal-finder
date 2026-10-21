@@ -88,16 +88,24 @@ function expN(){const P=Object.fromEntries(D.parks.map(p=>[pid(p),p]));let c='id
 function pcsv(t){const R=[];let r=[],f='',q=0;for(let i=0;i<t.length;i++){const c=t[i];if(q){if(c=='"'){if(t[i+1]=='"'){f+='"';i++}else q=0}else f+=c}else if(c=='"')q=1;else if(c==','){r.push(f);f=''}else if(c=='\n'){r.push(f);R.push(r);r=[];f=''}else if(c!='\r')f+=c}if(f||r.length){r.push(f);R.push(r)}return R}
 async function impN(f){if(!f)return;const t=await f.text();let n=0;try{if(f.name.endsWith('.json')){for(const[k,v]of Object.entries(JSON.parse(t)))if(v){NT[k]=v;n++}}else{const R=pcsv(t);const i=R[0].indexOf('id'),j=R[0].indexOf('note');for(const r of R.slice(1))if(r[i]&&r[j]){NT[r[i]]=r[j];n++}}saveN();tbl();alert('Imported '+n+' notes')}catch(x){alert('Could not read that file')}document.getElementById('impf').value=''}
 fetch('data.json',{cache:'no-store'}).then(r=>r.json()).then(render);
-</script><style>th{position:relative}.rz{position:absolute;top:0;right:0;width:7px;height:100%;cursor:col-resize;z-index:2}.rz:hover{background:#e8b92355}#rzr{font:12px Inter;color:#e8b923;cursor:pointer;text-decoration:underline;margin-left:10px}</style>
-<script>(function(){const K='mhp_colw';let W=JSON.parse(localStorage.getItem(K)||'{}'),busy=0;
+</script><style>th{position:relative}.rz{position:absolute;top:0;right:0;width:8px;height:100%;cursor:col-resize;z-index:2}.rz:hover{background:#e8b92355}#rzr{font:12px Inter;color:#e8b923;cursor:pointer;text-decoration:underline;margin-left:10px}
+table.fx{table-layout:fixed}table.fx th,table.fx td{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0!important;max-width:none}.nt{width:100%!important;min-width:0!important;box-sizing:border-box}</style>
+<script>(function(){const K='mhp_colw2';let W=JSON.parse(localStorage.getItem(K)||'{}'),busy=0;
 function tid(t){return t.closest('[id]')?.id||'t'}
-function apply(){if(busy)return;busy=1;document.querySelectorAll('table').forEach(t=>{const id=tid(t);t.querySelectorAll('thead th').forEach((th,i)=>{const w=W[id+':'+i];if(w){th.style.width=th.style.minWidth=th.style.maxWidth=w+'px';th.style.overflow='hidden';t.style.tableLayout='auto'}else{th.style.width=th.style.minWidth=th.style.maxWidth=''}
- if(!th.querySelector('.rz')){const h=document.createElement('span');h.className='rz';h.title='Drag to resize';th.appendChild(h);
+function lay(t){const id=tid(t),ws=W[id],ths=[...t.querySelectorAll('thead th')];let cg=t.querySelector('colgroup.rzc');
+ if(!ws||ws.length!==ths.length){t.classList.remove('fx');t.style.width='';if(cg)cg.remove();return}
+ if(!cg){cg=document.createElement('colgroup');cg.className='rzc';t.prepend(cg)}
+ if(cg.children.length!==ws.length){cg.innerHTML=ws.map(()=>'<col>').join('')}
+ ws.forEach((w,i)=>cg.children[i].style.width=w+'px');t.classList.add('fx');t.style.width=ws.reduce((a,b)=>a+b,0)+'px'}
+function apply(){if(busy)return;busy=1;document.querySelectorAll('table').forEach(t=>{const id=tid(t);lay(t);
+ t.querySelectorAll('thead th').forEach((th,i)=>{if(th.querySelector('.rz'))return;const h=document.createElement('span');h.className='rz';h.title='Drag to resize';th.appendChild(h);
  h.addEventListener('click',e=>{e.stopPropagation();e.preventDefault()},true);
- h.addEventListener('mousedown',e=>{e.stopPropagation();e.preventDefault();const x0=e.clientX,w0=th.offsetWidth;
-  const mv=ev=>{const w=Math.max(40,w0+ev.clientX-x0);W[id+':'+i]=w;th.style.width=th.style.minWidth=th.style.maxWidth=w+'px';th.style.overflow='hidden'};
-  const up=ev=>{document.removeEventListener('mousemove',mv);document.removeEventListener('mouseup',up);localStorage.setItem(K,JSON.stringify(W));const blk=c=>{c.stopPropagation();c.preventDefault()};window.addEventListener('click',blk,{capture:true,once:true});setTimeout(()=>window.removeEventListener('click',blk,true),50)};
-  document.addEventListener('mousemove',mv);document.addEventListener('mouseup',up)})}})});busy=0}
+ h.addEventListener('mousedown',e=>{e.stopPropagation();e.preventDefault();const ths=[...t.querySelectorAll('thead th')];
+  if(!W[id]||W[id].length!==ths.length)W[id]=ths.map(x=>x.getBoundingClientRect().width);
+  const x0=e.clientX,w0=W[id][i];
+  const mv=ev=>{W[id][i]=Math.max(40,Math.round(w0+ev.clientX-x0));lay(t)};
+  const up=()=>{document.removeEventListener('mousemove',mv);document.removeEventListener('mouseup',up);localStorage.setItem(K,JSON.stringify(W));const blk=c=>{c.stopPropagation();c.preventDefault()};window.addEventListener('click',blk,{capture:true,once:true});setTimeout(()=>window.removeEventListener('click',blk,true),50)};
+  document.addEventListener('mousemove',mv);document.addEventListener('mouseup',up)})})});busy=0}
 new MutationObserver(apply).observe(document.body,{childList:true,subtree:true});
 window.addEventListener('DOMContentLoaded',()=>{const c=document.getElementById('cnt');if(c){const a=document.createElement('span');a.id='rzr';a.textContent='Reset column widths';a.onclick=()=>{W={};localStorage.removeItem(K);apply()};c.after(a)}apply()})})()</script><!--SORTABLE-START--><script>
 /* Shared sortable tables (Grok Bot trackers). Click any header: asc/desc toggle with ▲/▼.
