@@ -1,0 +1,156 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow"><title>MHP Deal Finder</title><link rel="icon" href="data:,">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Oswald:wght@500;600;700&display=swap" rel="stylesheet">
+<script>if(window.Chart){Chart.defaults.color="#d4d4d4";Chart.defaults.borderColor="#262626";Chart.defaults.font.family="Inter";}</script>
+<style>.pills{display:flex;flex-wrap:wrap;gap:8px;margin:4px 0 14px}.pill{border:1px solid var(--line);background:#fff;color:var(--txt);border-radius:999px;padding:7px 16px;font:600 13px Inter,system-ui;cursor:pointer;box-shadow:0 1px 2px rgba(0,0,0,.06);transition:all .15s}.pill:hover{transform:translateY(-1px);box-shadow:0 3px 8px rgba(30,58,138,.18)}.pill.on{background:var(--gold);color:#fff;border-color:var(--gold)}@media(max-width:600px){.pill{padding:6px 12px;font-size:12px}}.byw{display:flex;gap:16px;align-items:flex-start}.byw>.scroll{flex:1 1 auto;min-width:0}.byc{flex:0 0 460px;background:#fff;border:1px solid var(--line);border-radius:10px;padding:12px}@media(max-width:1000px){.byw{flex-direction:column}.byc{flex-basis:auto;width:100%}}
+:root{--bg:#f3f4f6;--line:#d1d5db;--gold:#1e3a8a;--txt:#111827;--muted:#a3a3a3;--red:#e11d2e;--green:#22c55e}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--txt);font:14px Inter,system-ui,sans-serif}
+h1,h2{font-family:Oswald,sans-serif;letter-spacing:.04em;margin:0;color:var(--gold)}h2{font-size:18px;margin:28px 0 10px}
+.wrap{max-width:1280px;margin:0 auto;padding:0 20px}.top{background:#fff;border-bottom:1px solid var(--line);padding:18px 0}
+.big{font:700 32px Oswald;color:var(--gold)}.muted{color:var(--muted);font-size:12px}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px}
+.card{background:#fff;border:1px solid var(--line);border-radius:12px;padding:14px}.card .l{font:700 11px Inter;letter-spacing:.14em;color:var(--muted);text-transform:uppercase}
+.card .v{font:700 24px Oswald;margin-top:4px}
+table{width:100%;border-collapse:collapse;background:#fff;border:1px solid var(--line);border-radius:12px;overflow:hidden}
+th,td{padding:7px 10px;border-bottom:1px solid #eee;text-align:right;white-space:nowrap}th{background:var(--gold);color:#fff;font-weight:600}
+td:first-child,th:first-child{text-align:left}.neg{color:var(--red)}.pos{color:var(--green)}.scroll{overflow-x:auto}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px}@media(max-width:900px){.grid2{grid-template-columns:1fr}}
+.chartbox{background:#fff;border:1px solid var(--line);border-radius:12px;padding:12px}
+#gate{position:fixed;inset:0;background:var(--bg);display:grid;place-items:center;z-index:9}
+#gate form{background:#fff;border:1px solid var(--line);border-radius:14px;padding:28px;text-align:center}
+#gate input{font:18px Inter;padding:8px 12px;border:1px solid var(--line);border-radius:8px;width:180px;text-align:center}
+#gate button{margin-left:6px;font:600 15px Inter;padding:9px 16px;border:0;border-radius:8px;background:var(--gold);color:#fff;cursor:pointer}
+</style><style>.sec{position:relative}.sec.drag{opacity:.55;outline:2px dashed var(--gold);border-radius:10px}.hdl{cursor:grab;touch-action:none;user-select:none;-webkit-user-select:none;display:inline-block;padding:2px 10px;margin-right:6px;color:var(--gold);font-size:20px;vertical-align:middle}.swp{float:right;font-size:12px;border:1px solid #ccd;border-radius:12px;background:#fff;padding:2px 10px;cursor:pointer}#rstL{border:1px solid #ccd;border-radius:14px;background:#fff;padding:4px 12px;font-size:12px;cursor:pointer;margin:10px 0}</style><style id="socal">
+:root{--bg:#050505;--line:#262626;--gold:#e8b923;--txt:#f5f5f5;--muted:#a3a3a3;--red:#ff2d3a;--green:#22c55e;--surf:#141414;--surf2:#1c1c1c;--gb:#e8b92347}
+body{background:radial-gradient(1200px 500px at 50% -200px,#e8b9231a,transparent),var(--bg);color:var(--txt)}
+.top{background:linear-gradient(180deg,#0c0c0c,#050505);border-bottom:1px solid var(--gb);box-shadow:0 12px 40px #0000008c;position:relative}
+.top::after{content:"";position:absolute;left:0;right:0;bottom:-1px;height:2px;background:linear-gradient(90deg,transparent,#e8b923,transparent)}
+h1{color:var(--gold);text-transform:uppercase;letter-spacing:.08em}h2{color:var(--gold);text-transform:uppercase;letter-spacing:.1em;font-weight:600;border-left:3px solid var(--gold);padding-left:10px}
+.big{color:#f5c518;text-shadow:0 0 18px #e8b92340}
+.card,.chartbox,.byc,#gate form{background:linear-gradient(180deg,#1c1c1c,#141414);border:1px solid var(--gb);border-radius:1rem;box-shadow:0 1px 2px #0000001a;transition:transform .15s,box-shadow .15s}
+.card:hover,.chartbox:hover,.byc:hover{transform:translateY(-2px);box-shadow:0 14px 36px #00000073,0 0 0 1px #e8b923}
+.card .l{color:var(--muted)}.card .v{color:var(--txt)}
+table{background:var(--surf);border:1px solid var(--gb);border-radius:1rem;color:var(--txt)}
+th{background:#0c0c0c;color:var(--gold);text-transform:uppercase;font:600 11px Inter;letter-spacing:.12em;border-bottom:1px solid var(--gold)}
+td{border-bottom:1px solid #202020}tr:nth-child(even) td{background:#0c0c0c66}tr:hover td{background:#e8b92314}
+tr.ft td,tr:last-child td{font-weight:700}
+.pill{background:var(--surf2);color:var(--ink,#d4d4d4);border:1px solid var(--line);box-shadow:none}.pill:hover{border-color:var(--gold);box-shadow:0 0 18px #e8b92355}
+.pill.on{background:linear-gradient(180deg,#f5c518,#e8b923);color:#050505;border-color:#e8b923;box-shadow:0 0 18px #e8b923d9,0 4px 12px #00000080}
+.swp,#rstL{background:var(--surf2);color:var(--gold);border:1px solid var(--gb);border-radius:999px}.swp:hover,#rstL:hover{border-color:var(--gold)}
+#gate{background:var(--bg)}#gate input{background:#0c0c0c;color:var(--txt);border:1px solid var(--gb)}#gate button{background:var(--gold);color:#050505;border-radius:999px;font-weight:700}
+.hdl{color:var(--gold)}.muted{color:var(--muted)}
+#wl .card div[style*="border-bottom"]{border-bottom-color:#262626!important}
+</style><style id="signc">.card .v.pos,.big.pos,td.pos,.pos{color:var(--green)!important}.card .v.neg,.big.neg,td.neg,.neg{color:var(--red)!important}.big.pos{text-shadow:0 0 18px #22c55e40}.big.neg{text-shadow:0 0 18px #ff2d3a40}</style><style id="fx">@keyframes up{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
+.fx-in{opacity:0;animation:up .6s cubic-bezier(.2,.8,.2,1) forwards}
+@keyframes shim{0%{background-position:-200% 0}100%{background-position:200% 0}}
+.shim{background:linear-gradient(90deg,#f5c518 0%,#fff3b0 45%,#e8b923 55%,#f5c518 100%);background-size:200% 100%;-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;animation:shim 3.5s linear infinite}
+.shim.pos{background:linear-gradient(90deg,#22c55e,#bbf7d0 50%,#22c55e);background-size:200% 100%;-webkit-background-clip:text;background-clip:text}
+.bar{height:5px;background:#262626;border-radius:9px;margin-top:4px;overflow:hidden;min-width:70px}.bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,#e8b923,#22c55e);border-radius:9px;transition:width 1.2s cubic-bezier(.2,.8,.2,1)}
+.ring{width:54px;height:54px;float:right;margin-top:-4px}.ring circle{fill:none;stroke-width:6}.ring .bg{stroke:#262626}.ring .fg{stroke:#e8b923;stroke-linecap:round;transition:stroke-dashoffset 1.4s cubic-bezier(.2,.8,.2,1);transform:rotate(-90deg);transform-origin:50% 50%}.ring text{fill:#f5f5f5;font:700 12px Oswald;text-anchor:middle}
+.card{transition:transform .2s,box-shadow .2s}.card:hover{transform:translateY(-4px) scale(1.01)}
+.spark{position:fixed;width:7px;height:7px;border-radius:2px;pointer-events:none;z-index:99}
+@media(prefers-reduced-motion:reduce){.fx-in{animation:none;opacity:1}.shim{animation:none}.bar i,.ring .fg{transition:none}.card:hover{transform:none}}</style><style>.lg{display:inline-block;width:10px;height:10px;border-radius:2px;margin:0 4px 0 10px;vertical-align:middle}.stk{display:flex;height:8px;border-radius:9px;overflow:hidden;background:#1c1c1c;min-width:140px;margin-top:3px}.stk i{display:block;height:100%;width:0;transition:width 1.2s cubic-bezier(.2,.8,.2,1)}@media(prefers-reduced-motion:reduce){.stk i{transition:none}}</style></head><body>
+<style>.ctl{display:flex;flex-wrap:wrap;gap:10px;margin:0 0 12px}.ctl input,.ctl select{background:#0c0c0c;color:#f5f5f5;border:1px solid #e8b92347;border-radius:999px;padding:7px 14px;font:13px Inter}td a{color:#e8b923}</style></head><body>
+<div id="gate"><form onsubmit="go(event)"><h1>MHP Deal Finder</h1><p class="muted">Enter password</p><input id="pw" type="password" autofocus><button>Open</button><div id="err" class="neg" style="margin-top:8px"></div></form></div>
+<div id="app" style="display:none"><div class="top"><div class="wrap"><h1>MHP Deal Finder</h1><div class="muted" id="gen"></div></div></div><div class="wrap">
+<h2>Overview</h2><div class="cards" id="cards"></div>
+<h2>Parks by State</h2><div class="scroll" id="tS"></div>
+<h2>Parks</h2><div class="pills" id="pills"></div>
+<div class="ctl"><input id="q" placeholder="Search park, city, county, address…" size="34"><select id="pmin"><option value="10">10+ pads</option><option value="20">20+ pads</option><option value="30">30+ pads</option><option value="40">40+ pads</option></select><select id="ph"><option value="">Any phone</option><option value="1">Has phone</option></select><span class="muted" id="cnt" style="align-self:center"></span></div>
+<div class="scroll" id="tP"></div><br></div></div>
+<script>
+const b64=s=>Uint8Array.from(atob(s),c=>c.charCodeAt(0));
+async function decrypt(pw){const e=await (await fetch('data.enc.json',{cache:'no-store'})).json();
+ const km=await crypto.subtle.importKey('raw',new TextEncoder().encode(pw),'PBKDF2',false,['deriveKey']);
+ const key=await crypto.subtle.deriveKey({name:'PBKDF2',salt:b64(e.salt),iterations:e.iter,hash:'SHA-256'},km,{name:'AES-GCM',length:256},false,['decrypt']);
+ return JSON.parse(new TextDecoder().decode(await crypto.subtle.decrypt({name:'AES-GCM',iv:b64(e.iv)},key,b64(e.ct))));}
+const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const N=n=>Number(n).toLocaleString();let D,ST='';
+function render(d){D=d;document.getElementById('gen').textContent='Off-market mobile home parks, 10–50 pads · '+d.parks.length.toLocaleString()+' parks in '+d.states.length+' states · built '+d.generated;
+ const P=d.parks,tp=P.reduce((a,p)=>a+p[7],0),wp=P.filter(p=>p[6]).length;
+ const C=[['Parks',N(P.length)],['States',d.states.length],['Total Pads',N(tp)],['Avg Pads / Park',(tp/P.length).toFixed(1)],['With Phone',N(wp)],['30–50 Pads',N(P.filter(p=>p[7]>=30).length)]];
+ document.getElementById('cards').innerHTML=C.map(c=>`<div class="card"><div class="l">${c[0]}</div><div class="v">${c[1]}</div></div>`).join('');
+ let h='<table><thead><tr><th>State</th><th>Parks</th><th>Total Pads</th><th>Avg Pads</th><th>30–50 Pads</th><th>With Phone</th><th>Pulled</th></tr></thead><tbody>',T=[0,0,0,0];
+ for(const s of d.states){const L=P.filter(p=>p[0]===s.ab),pd=L.reduce((a,p)=>a+p[7],0),b=L.filter(p=>p[7]>=30).length,w=L.filter(p=>p[6]).length;T[0]+=L.length;T[1]+=pd;T[2]+=b;T[3]+=w;
+  h+=`<tr><td>${esc(s.name)}</td><td data-v="${L.length}">${N(L.length)}</td><td data-v="${pd}">${N(pd)}</td><td data-v="${pd/L.length}">${(pd/L.length).toFixed(1)}</td><td data-v="${b}">${N(b)}</td><td data-v="${w}">${N(w)}</td><td>${esc(s.pulled)}</td></tr>`}
+ h+=`<tr class="ft"><td>TOTAL</td><td>${N(T[0])}</td><td>${N(T[1])}</td><td>${(T[1]/T[0]).toFixed(1)}</td><td>${N(T[2])}</td><td>${N(T[3])}</td><td></td></tr></tbody></table>`;document.getElementById('tS').innerHTML=h;
+ const pl=[['','All']].concat(d.states.map(s=>[s.ab,s.name]));
+ document.getElementById('pills').innerHTML=pl.map(x=>`<button class="pill${x[0]===ST?' on':''}" data-s="${x[0]}">${esc(x[1])}</button>`).join('');
+ document.querySelectorAll('#pills .pill').forEach(b=>b.onclick=()=>{ST=b.dataset.s;document.querySelectorAll('#pills .pill').forEach(x=>x.classList.toggle('on',x===b));tbl()});
+ ['q','pmin','ph'].forEach(i=>document.getElementById(i).oninput=tbl);tbl()}
+function tbl(){const q=document.getElementById('q').value.toLowerCase(),mn=+document.getElementById('pmin').value,ph=document.getElementById('ph').value;
+ const L=D.parks.filter(p=>(!ST||p[0]===ST)&&p[7]>=mn&&(!ph||p[6])&&(!q||(p[1]+' '+p[2]+' '+p[3]+' '+p[4]+' '+p[5]).toLowerCase().includes(q)));
+ document.getElementById('cnt').textContent=N(L.length)+' parks · '+N(L.reduce((a,p)=>a+p[7],0))+' pads';
+ let h='<table><thead><tr><th>Park</th><th>State</th><th>City</th><th>County</th><th>Address</th><th>Zip</th><th>Phone</th><th>Pads</th><th>Source</th><th>Listing</th><th>Map</th></tr></thead><tbody>';
+ for(const p of L){const m=p[8]!=null?`https://www.google.com/maps?q=${p[8]},${p[9]}`:`https://www.google.com/maps/search/${encodeURIComponent(p[3]+' '+p[4]+' '+p[1]+' '+p[0])}`;
+  h+=`<tr><td style="text-align:left">${esc(p[3])}</td><td>${p[0]}</td><td style="text-align:left">${esc(p[1])}</td><td style="text-align:left">${esc(p[2])}</td><td style="text-align:left">${esc(p[4])}</td><td>${esc(p[5])}</td><td>${p[6]?`<a href="tel:${esc(p[6])}">${esc(p[6])}</a>`:''}</td><td data-v="${p[7]}">${p[7]}</td><td style="text-align:left">${esc(p[10])}</td><td>${p[11]?`<a href="${esc(p[11])}" target="_blank" rel="noopener">Open</a>`:''}</td><td><a href="${m}" target="_blank" rel="noopener">Map</a></td></tr>`}
+ document.getElementById('tP').innerHTML=h+'</tbody></table>'}
+async function go(e){e&&e.preventDefault();const pw=document.getElementById('pw').value;try{const d=await decrypt(pw);sessionStorage.setItem('mhp_pw',pw);document.getElementById('gate').style.display='none';document.getElementById('app').style.display='';render(d)}catch(x){document.getElementById('err').textContent='Wrong password'}}
+(async()=>{const p=sessionStorage.getItem('mhp_pw');if(p){document.getElementById('pw').value=p;go()}})();
+</script><!--SORTABLE-START--><script>
+/* Shared sortable tables (Grok Bot trackers). Click any header: asc/desc toggle with ▲/▼.
+   Works on dynamically rendered tables via event delegation. Totals (tfoot, .total/.ft/.tot rows,
+   or first cell TOTAL/ALL-TIME/GRAND) stay pinned at bottom. Group-label rows (fewer cells / colspan)
+   keep their members: sorting happens within each group. Uses td[data-v] when present.
+   Skip: th with own onclick, th.nosort, or table[data-nosort]. */
+(function(){
+  if(window.__sortableShared)return;window.__sortableShared=1;
+  var st=document.createElement('style');
+  st.textContent='table:not([data-nosort]) th:not(.nosort){cursor:pointer;user-select:none}th .srt-ar{font-size:.8em;opacity:.85;margin-left:3px}';
+  (document.head||document.documentElement).appendChild(st);
+  var MON={jan:1,feb:2,mar:3,apr:4,may:5,jun:6,jul:7,aug:8,sep:9,oct:10,nov:11,dec:12};
+  function key(cell){
+    if(!cell)return null;
+    var raw=cell.dataset&&cell.dataset.v!=null?cell.dataset.v:cell.textContent;
+    var s=String(raw).replace(/[▲▼]/g,'').trim();
+    if(!s||s==='—'||s==='-'||s==='–'||/^n\/?a$/i.test(s))return null;
+    var m;
+    if((m=s.match(/^(\d{4})-(\d{2})(?:-(\d{2}))?/)))return {n:Date.UTC(+m[1],+m[2]-1,+(m[3]||1))};
+    if((m=s.match(/^(\d{1,2})\/(\d{1,2})\/(\d{2,4})$/))){var y=+m[3];if(y<100)y+=2000;return {n:Date.UTC(y,+m[1]-1,+m[2])};}
+    if((m=s.match(/^([A-Za-z]{3})[a-z]*\.? (\d{1,2}),? (\d{4})$/))&&MON[m[1].toLowerCase()])return {n:Date.UTC(+m[3],MON[m[1].toLowerCase()]-1,+m[2])};
+    if((m=s.match(/^([A-Za-z]{3})[a-z]* (\d{4})$/))&&MON[m[1].toLowerCase()])return {n:Date.UTC(+m[2],MON[m[1].toLowerCase()]-1,1)};
+    if((m=s.match(/^Q([1-4]) (\d{4})$/i)))return {n:Date.UTC(+m[2],(+m[1]-1)*3,1)};
+    var t=s.replace(/[$,%x×\s]|USD/gi,'').replace(/^\+/,'').replace(/[−–]/g,'-');
+    var neg=/^\(.*\)$/.test(t);if(neg)t=t.slice(1,-1);
+    var mult=1;if((m=t.match(/^(-?[\d.]+)([KMB])$/i))){t=m[1];mult={k:1e3,m:1e6,b:1e9}[m[2].toLowerCase()];}
+    if(/^-?\d*\.?\d+$/.test(t))return {n:parseFloat(t)*mult*(neg?-1:1)};
+    return {s:s.toLowerCase()};
+  }
+  function pinned(r){
+    if(r.parentElement&&r.parentElement.tagName==='TFOOT')return true;
+    if(/(^|\s)(total|totals|ft|tot|sum|grand|pinned)(\s|$)/i.test(r.className))return true;
+    var c=r.cells[0];return !!c&&/^\s*(TOTAL|TOTALS|ALL-TIME|GRAND TOTAL)\b/i.test(c.textContent);
+  }
+  document.addEventListener('click',function(e){
+    var th=e.target.closest&&e.target.closest('th');if(!th||th.onclick||th.classList.contains('nosort'))return;
+    var tb=th.closest('table');if(!tb||tb.hasAttribute('data-nosort'))return;
+    var hr=th.parentElement;if(hr.parentElement.tagName==='TFOOT')return;
+    var ci=0;for(var k=0;k<hr.cells.length&&hr.cells[k]!==th;k++)ci+=hr.cells[k].colSpan||1;
+    var ncol=0;for(k=0;k<hr.cells.length;k++)ncol+=hr.cells[k].colSpan||1;
+    var dir=th.dataset.sdir==='asc'?'desc':'asc',m=dir==='asc'?1:-1;
+    tb.querySelectorAll('th').forEach(function(x){delete x.dataset.sdir;var a=x.querySelector('.srt-ar');if(a)a.remove();});
+    th.dataset.sdir=dir;var ar=document.createElement('span');ar.className='srt-ar';ar.textContent=dir==='asc'?'▲':'▼';th.appendChild(ar);
+    var bodies=tb.tBodies.length?[].slice.call(tb.tBodies):[tb];
+    bodies.forEach(function(body){
+      var all=[].slice.call(body.rows).filter(function(r){return r!==hr&&!(r.cells.length&&r.cells[0].tagName==='TH'&&!r.querySelector('td'));});
+      var pins=[],groups=[{head:null,rows:[]}];
+      all.forEach(function(r){
+        if(pinned(r)){pins.push(r);return;}
+        var w=0;for(var j=0;j<r.cells.length;j++)w+=r.cells[j].colSpan||1;
+        if(r.cells.length===1&&ncol>1)groups.push({head:r,rows:[]});else groups[groups.length-1].rows.push(r);
+      });
+      function cellAt(r){var x=0;for(var j=0;j<r.cells.length;j++){if(x===ci)return r.cells[j];x+=r.cells[j].colSpan||1;}return null;}
+      groups.forEach(function(g){
+        g.rows.sort(function(a,b){var A=key(cellAt(a)),B=key(cellAt(b));
+          if(!A&&!B)return 0;if(!A)return 1;if(!B)return -1;
+          if(A.n!=null&&B.n!=null)return (A.n-B.n)*m;
+          return String(A.s!=null?A.s:A.n).localeCompare(String(B.s!=null?B.s:B.n),undefined,{numeric:true})*m;});
+        if(g.head)body.appendChild(g.head);g.rows.forEach(function(r){body.appendChild(r);});
+      });
+      pins.forEach(function(r){body.appendChild(r);});
+    });
+  },false);
+})();
+
+</script><!--SORTABLE-END-->
+</body></html>
