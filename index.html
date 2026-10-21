@@ -90,6 +90,20 @@ async function impN(f){if(!f)return;const t=await f.text();let n=0;try{if(f.name
 fetch('data.json',{cache:'no-store'}).then(r=>r.json()).then(render);
 </script><style>th{position:relative}.rz{position:absolute;top:0;right:0;width:8px;height:100%;cursor:col-resize;z-index:2}.rz:hover{background:#e8b92355}#rzr{font:12px Inter;color:#e8b923;cursor:pointer;text-decoration:underline;margin-left:10px}
 table.fx{table-layout:fixed}table.fx th,table.fx td{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0!important;max-width:none}.nt{width:100%!important;min-width:0!important;box-sizing:border-box}</style>
+<style>th.drg{opacity:.4}th.dov{box-shadow:inset 3px 0 0 #e8b923}th[draggable]{cursor:grab}</style>
+<script>(function(){const K='mhp_colord1';let O=JSON.parse(localStorage.getItem(K)||'{}'),busy=0,src=null;
+const tid=t=>t.closest('[id]')?.id||'t',lab=th=>th.textContent.replace(/[▲▼]/g,'').trim();
+function perm(t,ord){const ths=[...t.querySelectorAll('thead th')],L=ths.map(lab);const idx=ord.map(n=>L.indexOf(n)).filter(i=>i>=0);L.forEach((n,i)=>{if(!idx.includes(i))idx.push(i)});if(idx.every((v,i)=>v===i))return;
+ for(const r of t.rows){const c=[...r.cells];if(c.length!==L.length)continue;idx.forEach(i=>r.appendChild(c[i]))}}
+function apply(){if(busy)return;busy=1;document.querySelectorAll('table').forEach(t=>{const id=tid(t);if(t.dataset.ordd!==String(t.tBodies[0]?.rows.length)){if(O[id])perm(t,O[id]);t.dataset.ordd=String(t.tBodies[0]?.rows.length)}
+ t.querySelectorAll('thead th').forEach(th=>{if(th.draggable)return;th.draggable=true;th.title='Drag to move column';
+  th.addEventListener('dragstart',e=>{if(e.target.classList?.contains('rz')){e.preventDefault();return}src=th;th.classList.add('drg');e.dataTransfer.effectAllowed='move';e.dataTransfer.setData('text/plain','c')});
+  th.addEventListener('dragend',()=>{th.classList.remove('drg');t.querySelectorAll('.dov').forEach(x=>x.classList.remove('dov'))});
+  th.addEventListener('dragover',e=>{if(src&&src.closest('table')===t){e.preventDefault();th.classList.add('dov')}});
+  th.addEventListener('dragleave',()=>th.classList.remove('dov'));
+  th.addEventListener('drop',e=>{e.preventDefault();th.classList.remove('dov');if(!src||src===th||src.closest('table')!==t)return;const L=[...t.querySelectorAll('thead th')].map(lab),a=L.indexOf(lab(src)),b=L.indexOf(lab(th));L.splice(b,0,L.splice(a,1)[0]);O[id]=L;localStorage.setItem(K,JSON.stringify(O));busy=1;perm(t,L);busy=0;src=null})})});busy=0}
+new MutationObserver(apply).observe(document.body,{childList:true,subtree:true});
+window.addEventListener('DOMContentLoaded',()=>{const c=document.getElementById('cnt');if(c){const a=document.createElement('span');a.id='rzr2';a.style.cssText='font:12px Inter;color:#e8b923;cursor:pointer;text-decoration:underline;margin-left:10px';a.textContent='Reset column order';a.onclick=()=>{O={};localStorage.removeItem(K);location.reload()};c.after(a)}apply()})})()</script>
 <script>(function(){const K='mhp_colw3';let W=JSON.parse(localStorage.getItem(K)||'{}'),busy=0,DF={};
 function tid(t){return t.closest('[id]')?.id||'t'}
 function defs(t,ths){const rs=[...t.tBodies[0]?.rows||[]].slice(0,600),n=ths.length;return ths.map((th,i)=>{let L=0,c=0;for(const r of rs){const td=r.cells[i];if(!td)continue;const inp=td.querySelector('input');const v=inp?(inp.value||'Add note…'):td.textContent.trim();if(v){L+=v.length;c++}}const avg=c?L/c:0,hw=th.textContent.replace(/[▲▼]/g,'').trim().length*8.5+30;return Math.round(Math.min(350,Math.max(hw,avg*7.5+24,40)))})}
